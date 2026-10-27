@@ -1,7 +1,8 @@
-﻿import express from "express";
+﻿import dotenv from "dotenv";
+import express from "express";
 import path from "path";
-import dotenv from "dotenv";
 import checkoutRouter from "./routes/checkout";
+import invoicesRouter from "./routes/invoices";
 
 dotenv.config();
 
@@ -14,6 +15,7 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, "..", "public")));
 
 app.use("/api", checkoutRouter);
+app.use("/api", invoicesRouter);
 app.get("/ping", (_req, res) => res.send("pong"));
 
 const PORT = process.env.PORT || 3000;

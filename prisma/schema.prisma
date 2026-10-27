@@ -15,14 +15,29 @@ model User {
 }
 
 model Subscription {
-  id                 String   @id @default(uuid())
-  stripeId           String   @unique
+  id                 String    @id @default(uuid())
+  stripeId           String    @unique
   status             String
+  amount             Int       @default(0)
+  currency           String    @default("usd")
   currentPeriodStart DateTime
   currentPeriodEnd   DateTime
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @updatedAt
+  reminderSentAt     DateTime?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+  userId             String
+  invoices           Invoice[]
+  user               User      @relation(fields: [userId], references: [id])
+}
 
-  userId String
-  user   User   @relation(fields: [userId], references: [id])
+model Invoice {
+  id              String       @id @default(uuid())
+  number          String       @unique
+  stripeInvoiceId String?      @unique
+  amount          Int
+  currency        String
+  filePath        String
+  createdAt       DateTime     @default(now())
+  subscriptionId  String
+  subscription    Subscription @relation(fields: [subscriptionId], references: [id])
 }
