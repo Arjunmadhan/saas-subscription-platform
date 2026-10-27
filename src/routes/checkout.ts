@@ -3,6 +3,7 @@ import Stripe from "stripe";
 import { prisma } from "../config/prisma";
 import { sendConfirmationEmail } from "../services/email";
 import { createInvoice } from "../services/invoice";
+import { invalidateMetricsCache } from "../services/metrics.service";
 import { logger } from "../utils/logger";
 
 const router = Router();
@@ -133,6 +134,9 @@ async function processPayment(a: {
       console.error("EMAIL FAILED:", error.message);
       logger.error("Email failed: " + error.message);
     }
+
+    // Payment changed subscriber/revenue numbers, so drop the cached metrics
+    await invalidateMetricsCache();
 
     console.log("========== PROCESS PAYMENT COMPLETED ==========\n");
   } catch (error: any) {
