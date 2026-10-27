@@ -1,0 +1,35 @@
+# Dependencies
+node_modules/
+
+# Environment variables (never commit real secrets)
+.env
+
+# TypeScript build output
+dist/
+
+# Generated Prisma client
+node_modules/.prisma/
+
+# PDF invoices (generated at runtime)
+invoices/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE / Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# npm / yarn lock (keep package-lock.json but ignore yarn)
+yarn.lock
+
+# Docker volumes (local data)
+pgdata/

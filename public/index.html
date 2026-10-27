@@ -1,0 +1,69 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SaaS Subscription - Checkout</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: Arial, sans-serif; background: #f4f6f9; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+    .card { background: #fff; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); width: 100%; max-width: 400px; }
+    h2 { margin-bottom: 1rem; color: #333; text-align: center; }
+    label { display: block; margin-top: 1rem; font-weight: bold; color: #555; font-size: 0.9rem; }
+    input { width: 100%; padding: 0.6rem; margin-top: 0.3rem; border: 1px solid #ddd; border-radius: 6px; font-size: 1rem; }
+    input:focus { outline: none; border-color: #5469d4; }
+    button { width: 100%; margin-top: 1.5rem; padding: 0.75rem; background: #5469d4; color: #fff; border: none; border-radius: 6px; font-size: 1rem; cursor: pointer; }
+    button:hover { background: #4255b8; }
+    button:disabled { background: #aaa; cursor: not-allowed; }
+    .msg { margin-top: 1rem; text-align: center; color: #c0392b; font-size: 0.9rem; }
+    .footer { margin-top: 1.5rem; text-align: center; font-size: 0.8rem; color: #999; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>Subscribe to Our Plan</h2>
+    <label for="email">Email</label>
+    <input id="email" type="email" placeholder="you@example.com" required />
+    <label for="priceId">Stripe Price ID</label>
+    <input id="priceId" type="text" placeholder="price_1ABC..." required />
+    <button id="checkoutBtn">Subscribe Now</button>
+    <div class="msg" id="msg"></div>
+    <div class="footer">Powered by Stripe (Test Mode)</div>
+  </div>
+
+  <script>
+    document.getElementById('checkoutBtn').addEventListener('click', async function() {
+      var btn = this;
+      var email = document.getElementById('email').value.trim();
+      var priceId = document.getElementById('priceId').value.trim();
+      var msg = document.getElementById('msg');
+
+      if (!email || !priceId) { msg.textContent = 'Please fill in both fields.'; return; }
+
+      btn.disabled = true;
+      btn.textContent = 'Redirecting...';
+      msg.textContent = '';
+
+      try {
+        var res = await fetch('/api/checkout', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: email, priceId: priceId })
+        });
+        var data = await res.json();
+        if (data.checkoutUrl) {
+          window.location.href = data.checkoutUrl;
+        } else {
+          msg.textContent = data.error || 'Something went wrong.';
+          btn.disabled = false;
+          btn.textContent = 'Subscribe Now';
+        }
+      } catch (err) {
+        msg.textContent = 'Network error. Please try again.';
+        btn.disabled = false;
+        btn.textContent = 'Subscribe Now';
+      }
+    });
+  </script>
+</body>
+</html>
