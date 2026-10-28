@@ -30,7 +30,6 @@ async function processPayment(a: {
   });
 
   try {
-    // Check for duplicate invoice events
     if (a.stripeInvoiceId) {
       console.log("Checking existing invoice...");
 
@@ -46,7 +45,6 @@ async function processPayment(a: {
       console.log("No existing invoice found. Continuing...");
     }
 
-    // Create or retrieve user
     console.log("Upserting user...");
 
     const user = await prisma.user.upsert({
@@ -60,7 +58,6 @@ async function processPayment(a: {
 
     console.log("USER UPSERT SUCCESS:", user);
 
-    // Retrieve Stripe subscription
     console.log("Retrieving Stripe subscription...");
 
     const subscription: any = await stripe.subscriptions.retrieve(
@@ -87,7 +84,6 @@ async function processPayment(a: {
       reminderSentAt: null,
     };
 
-    // Create or update subscription
     console.log("Upserting subscription...");
 
     const sub = await prisma.subscription.upsert({
@@ -102,7 +98,6 @@ async function processPayment(a: {
 
     console.log("SUBSCRIPTION UPSERT SUCCESS:", sub);
 
-    // Create invoice
     console.log("Creating invoice...");
 
     let invoice;
@@ -125,7 +120,6 @@ async function processPayment(a: {
 
     console.log("INVOICE CREATED SUCCESS:", invoice);
 
-    // Send confirmation email
     try {
       console.log("Sending confirmation email...");
       await sendConfirmationEmail(invoice.id);
@@ -135,7 +129,6 @@ async function processPayment(a: {
       logger.error("Email failed: " + error.message);
     }
 
-    // Payment changed subscriber/revenue numbers, so drop the cached metrics
     await invalidateMetricsCache();
 
     console.log("========== PROCESS PAYMENT COMPLETED ==========\n");

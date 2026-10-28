@@ -11,13 +11,13 @@ dotenv.config();
 
 const app = express();
 
-// Stripe webhook needs raw body - must be before express.json()
+
 app.use("/api/webhook", express.raw({ type: "application/json" }));
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "..", "public")));
 
-// Routes
+
 app.use("/api", checkoutRouter);
 app.use("/api", invoicesRouter);
 app.use("/api", metricsRouter);

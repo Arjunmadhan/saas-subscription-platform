@@ -3,7 +3,6 @@ import { logger } from "../utils/logger";
 
 let cached: Promise<Transporter> | null = null;
 
-// Uses SMTP_* from .env (e.g. Mailtrap); falls back to an auto-created Ethereal test account.
 export function getTransporter(): Promise<Transporter> {
   if (!cached) {
     cached = (async () => {

@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "saas-platform": {
+      "command": "node",
+      "args": [
+        "C:\\Users\\tmarj\\OneDrive\\Desktop\\saas-subscription-platform\\dist\\mcp\\server.js"
+      ]
+    }
+  }
+}

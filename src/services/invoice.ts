@@ -20,7 +20,6 @@ export async function createInvoice(p: {
   const number = `INV-${Date.now()}`;
   const filePath = path.join(dir, `${number}.pdf`);
 
-  // DB row first: the unique stripeInvoiceId blocks duplicate webhook processing
   const invoice = await prisma.invoice.create({
     data: {
       number,
