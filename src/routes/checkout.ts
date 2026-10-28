@@ -49,7 +49,9 @@ async function processPayment(a: {
 
     const user = await prisma.user.upsert({
       where: { email: a.email },
-      update: {},
+      update: {
+        name: a.name ?? undefined,
+      },
       create: {
         email: a.email,
         name: a.name ?? "",
@@ -155,19 +157,20 @@ function getPriceId(plan: string): string | undefined {
 }
 
 router.post("/checkout", async (req: Request, res: Response) => {
-  const { email, plan } = req.body;
+  const { name, email, plan } = req.body;
   const priceId = getPriceId(String(plan));
 
   if (!email || !priceId) {
-    return res.status(400).json({
-      error: "valid email and plan are required",
-    });
+    return res.status(400).json({});
   }
 
   try {
     console.log("Creating Stripe Checkout Session:", { email, plan });
 
-    const customer = await stripe.customers.create({ email });
+    const customer = await stripe.customers.create({
+      name,
+      email,
+    });
 
     const session = await stripe.checkout.sessions.create({
       mode: "subscription",
